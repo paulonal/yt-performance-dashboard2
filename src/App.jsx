@@ -577,6 +577,69 @@ const DashboardContent = () => {
               >
                 Print to PDF
               </button>
+              <button
+                className="btn-secondary"
+                onClick={() => {
+                  const activeProfile = getActiveProfile();
+                  const stateObj = {};
+                  for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.startsWith(`profile_${activeProfile}_`) || key === 'yt_active_profile')) {
+                      stateObj[key] = localStorage.getItem(key);
+                    }
+                  }
+                  const appUrl = window.location.origin;
+                  const serializedState = JSON.stringify(stateObj);
+                  const profileName = activeProfile === 'ariana' ? 'Ariana DeMers' : 'Caribbean Caterers';
+                  const html = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YT Dashboard - ${profileName}</title>
+  <style>
+    body { background:#0b0f19; color:#f8fafc; font-family:system-ui,sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; text-align:center; }
+    .card { background:#131a2a; border:1px solid #232d45; padding:2.5rem; border-radius:16px; box-shadow:0 10px 15px -3px rgba(0,0,0,.5); max-width:500px; width:90%; }
+    h1 { color:#ef4444; margin-top:0; font-family:system-ui,sans-serif; }
+    p { color:#94a3b8; line-height:1.6; margin-bottom:1.5rem; }
+    .btn { background:#3b82f6; color:#fff; padding:.75rem 1.5rem; border-radius:8px; font-weight:600; border:none; cursor:pointer; font-size:1rem; transition:all .2s; display:block; width:100%; margin-bottom:.75rem; }
+    .btn:hover { background:#2563eb; }
+    .btn.secondary { background:#1a2235; border:1px solid #232d45; color:#94a3b8; }
+    .url-row { display:flex; gap:.5rem; margin-top:1rem; }
+    .url-input { flex:1; background:#1a2235; border:1px solid #232d45; color:#fff; padding:.5rem .75rem; border-radius:6px; font-size:.85rem; }
+    label { font-size:.75rem; color:#94a3b8; display:block; text-align:left; margin-bottom:.25rem; margin-top:1rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>📊 YT Performance Dashboard</h1>
+    <p>Shared data for <strong>${profileName}</strong>.<br>Click below to load this profile into the live dashboard.</p>
+    <button class="btn" onclick="importAndOpen()">Import &amp; Open Dashboard</button>
+    <label>Dashboard URL (edit if needed):</label>
+    <input type="text" id="appUrl" class="url-input" value="${appUrl}">
+  </div>
+  <script>
+    const state = ${serializedState};
+    function importAndOpen() {
+      Object.keys(state).forEach(k => localStorage.setItem(k, state[k]));
+      window.location.href = document.getElementById('appUrl').value || '${appUrl}';
+    }
+  <\/script>
+</body>
+</html>`;
+                  const blob = new Blob([html], { type: 'text/html' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `yt-dashboard-${activeProfile}-${new Date().toISOString().split('T')[0]}.html`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                }}
+                title="Export dashboard data as a shareable HTML file"
+              >
+                Share / Export HTML
+              </button>
               <button 
                 className="btn-secondary" 
                 onClick={() => fileInputRef.current?.click()}
@@ -619,6 +682,67 @@ const DashboardContent = () => {
                 title="Print Dashboard to PDF"
               >
                 Print to PDF
+              </button>
+              <button
+                className="btn-secondary"
+                onClick={() => {
+                  const activeProfile = getActiveProfile();
+                  const stateObj = {};
+                  for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.startsWith(`profile_${activeProfile}_`) || key === 'yt_active_profile')) {
+                      stateObj[key] = localStorage.getItem(key);
+                    }
+                  }
+                  const appUrl = window.location.origin;
+                  const serializedState = JSON.stringify(stateObj);
+                  const profileName = activeProfile === 'ariana' ? 'Ariana DeMers' : 'Caribbean Caterers';
+                  const html = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YT Dashboard - ${profileName}</title>
+  <style>
+    body { background:#0b0f19; color:#f8fafc; font-family:system-ui,sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; text-align:center; }
+    .card { background:#131a2a; border:1px solid #232d45; padding:2.5rem; border-radius:16px; box-shadow:0 10px 15px -3px rgba(0,0,0,.5); max-width:500px; width:90%; }
+    h1 { color:#ef4444; margin-top:0; font-family:system-ui,sans-serif; }
+    p { color:#94a3b8; line-height:1.6; margin-bottom:1.5rem; }
+    .btn { background:#3b82f6; color:#fff; padding:.75rem 1.5rem; border-radius:8px; font-weight:600; border:none; cursor:pointer; font-size:1rem; transition:all .2s; display:block; width:100%; margin-bottom:.75rem; }
+    .btn:hover { background:#2563eb; }
+    label { font-size:.75rem; color:#94a3b8; display:block; text-align:left; margin-bottom:.25rem; margin-top:1rem; }
+    .url-input { width:100%; background:#1a2235; border:1px solid #232d45; color:#fff; padding:.5rem .75rem; border-radius:6px; font-size:.85rem; box-sizing:border-box; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>📊 YT Performance Dashboard</h1>
+    <p>Shared data for <strong>${profileName}</strong>.<br>Click below to load this profile into the live dashboard.</p>
+    <button class="btn" onclick="importAndOpen()">Import &amp; Open Dashboard</button>
+    <label>Dashboard URL (edit if needed):</label>
+    <input type="text" id="appUrl" class="url-input" value="${appUrl}">
+  </div>
+  <script>
+    const state = ${serializedState};
+    function importAndOpen() {
+      Object.keys(state).forEach(k => localStorage.setItem(k, state[k]));
+      window.location.href = document.getElementById('appUrl').value || '${appUrl}';
+    }
+  <\/script>
+</body>
+</html>`;
+                  const blob = new Blob([html], { type: 'text/html' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `yt-dashboard-${activeProfile}-${new Date().toISOString().split('T')[0]}.html`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                }}
+                title="Export dashboard data as a shareable HTML file"
+              >
+                Share / Export HTML
               </button>
               <button className="btn-secondary" onClick={() => {
                 // Force a re-fetch by triggering the hook again (simple trick: toggle token)
